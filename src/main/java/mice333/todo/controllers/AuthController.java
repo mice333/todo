@@ -49,11 +49,38 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public ResponseEntity<String> register(@RequestBody RegistryRequest request) {
+        User user = new User();
+        Exception e = request.checkPassword();
+        if (e != null) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        user.setUsername(request.username);
+        user.setPassword(passwordEncoder.encode(request.password));
         user.setRole(Role.USER);
         userRepository.save(user);
         return ResponseEntity.ok("регистрация успешно пройдена");
+    }
+
+    record RegistryRequest(String username, String password, String repeatPassword) {
+
+        @Override
+        public String username() {
+            return username;
+        }
+
+        @Override
+        public String password() {
+            return password;
+        }
+
+        public Exception checkPassword() {
+            if (!password.equals(repeatPassword)) {
+                return new Exception("Пароли не совпадают");
+            } else {
+                return null;
+            }
+        }
     }
 }
 

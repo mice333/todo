@@ -45,8 +45,9 @@ public class TaskController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createTask(@RequestBody Task task) throws URISyntaxException {
-        Task crtdTask = taskService.createTask(task);
+    public ResponseEntity<?> createTask(@RequestBody Task task, @RequestHeader("Authorization") String token) throws Exception {
+        System.out.println(token);
+        Task crtdTask = taskService.createTask(task, token);
         return ResponseEntity.status(HttpStatus.CREATED).body(crtdTask);
     }
 
