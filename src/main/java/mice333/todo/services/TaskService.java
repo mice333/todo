@@ -1,16 +1,11 @@
 package mice333.todo.services;
 
-import io.jsonwebtoken.Header;
 import mice333.todo.models.Task;
 import mice333.todo.models.User;
 import mice333.todo.repositories.TaskRepository;
 import mice333.todo.repositories.UserRepository;
 import mice333.todo.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

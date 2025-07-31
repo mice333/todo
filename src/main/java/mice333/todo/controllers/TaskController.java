@@ -1,16 +1,12 @@
 package mice333.todo.controllers;
 
-import jakarta.websocket.server.PathParam;
 import mice333.todo.models.Task;
 import mice333.todo.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
