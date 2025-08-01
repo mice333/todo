@@ -2,10 +2,12 @@
 
 ## Tech stack
 
-<img alt="Java" src="https://img.shields.io/badge/java-orange?style=for-the-badge&logo=openjdk&logoColor=white">
-<img alt="Spring" src="https://img.shields.io/badge/spring-green?style=for-the-badge&logo=spring&logoColor=white">
-<img alt="Java" src="https://img.shields.io/badge/postgresql-blue?style=for-the-badge&logo=postgresql&logoColor=white">
-<img alt="Java" src="https://img.shields.io/badge/junit-red?style=for-the-badge&logo=junit&logoColor=white">
+<p>
+  <img alt="Java" src="https://img.shields.io/badge/java-orange?style=for-the-badge&logo=openjdk&logoColor=white">
+  <img alt="Spring" src="https://img.shields.io/badge/spring-green?style=for-the-badge&logo=spring&logoColor=white">
+  <img alt="PSQL" src="https://img.shields.io/badge/postgresql-blue?style=for-the-badge&logo=postgresql&logoColor=white">
+  <img alt="JUnit" src="https://img.shields.io/badge/junit-red?style=for-the-badge&logo=junit&logoColor=white">
+</p>
 
 
 Backend списка задач.
@@ -17,6 +19,7 @@ Backend списка задач.
 - [x] Добавить логгирование
 - [ ] Покрыть тестами
 - [ ] Добавить миграцию
+- [ ] Документирование REST API с помощью Swagger
   <br/>
   <br/>
 - [ ] Добавить чтение токена из куки
