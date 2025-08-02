@@ -4,6 +4,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mice333.todo.models.AuthRequest;
+import mice333.todo.models.RegistryRequest;
 import mice333.todo.models.Role;
 import mice333.todo.models.User;
 import mice333.todo.repositories.UserRepository;
@@ -38,16 +40,16 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody AuthRequest request, HttpServletResponse response) {
-        log.info("Пользователь {} входит в систему", request.getUsername());
+        log.info("Пользователь {} входит в систему", request.username());
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.getUsername(),
-                            request.getPassword()
+                            request.username(),
+                            request.password()
                     )
             );
             String token = jwtUtils.generateToken((UserDetails) authentication.getPrincipal());
-            log.info("Токен выдан пользователю {}", request.getUsername());
+            log.info("Токен выдан пользователю {}", request.username());
             Cookie cookie = new Cookie("token", token);
             cookie.setPath("/");
             cookie.setMaxAge(expiry);
@@ -61,18 +63,6 @@ public class AuthController {
         }
     }
 
-
-    record AuthRequest(String username, String password) {
-
-        public Object getUsername() {
-            return username;
-        }
-
-        public Object getPassword() {
-            return password;
-        }
-    }
-
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegistryRequest request) {
         log.info("Проход регистрации POST \"/api/auth/register\"");
@@ -82,33 +72,11 @@ public class AuthController {
             log.error(e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-        user.setUsername(request.username);
-        user.setPassword(passwordEncoder.encode(request.password));
+        user.setUsername(request.username());
+        user.setPassword(passwordEncoder.encode(request.password()));
         user.setRole(Role.USER);
         userRepository.save(user);
         return ResponseEntity.ok("Регистрация успешно пройдена");
-    }
-
-    record RegistryRequest(String username, String password, String repeatPassword) {
-
-        @Override
-        public String username() {
-            return username;
-        }
-
-        @Override
-        public String password() {
-            return password;
-        }
-
-        public Exception checkPassword() {
-            log.info("Проверка пароля пользователя {}", username);
-            if (!password.equals(repeatPassword)) {
-                return new Exception("Пароли не совпадают");
-            } else {
-                return null;
-            }
-        }
     }
 }
 
