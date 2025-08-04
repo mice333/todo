@@ -1,5 +1,7 @@
 package mice333.todo.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Контроллер аутентификации", description = "Позволяет проходить авторизацию и регистрацию")
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
@@ -38,6 +41,10 @@ public class AuthController {
     @Value("${jwt.expiry}")
     private int expiry;
 
+    @Operation(
+            summary = "Авторизация пользователя",
+            description = "Позволяет пользователю войти в аккаунт"
+    )
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody AuthRequest request, HttpServletResponse response) {
         log.info("Пользователь {} входит в систему", request.username());
@@ -63,6 +70,10 @@ public class AuthController {
         }
     }
 
+    @Operation(
+            summary = "Регистрация пользователя",
+            description = "Позволяет зарегестрировать пользователя"
+    )
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegistryRequest request) {
         log.info("Проход регистрации POST \"/api/auth/register\"");
