@@ -6,7 +6,6 @@ import mice333.todo.models.Task;
 import mice333.todo.models.User;
 import mice333.todo.repositories.TaskRepository;
 import mice333.todo.repositories.UserRepository;
-import mice333.todo.security.JwtUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,19 +18,23 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
-    private final JwtUtils jwtUtils;
 
-    public Task createTask(Task task, String token) throws Exception {
-        String username = jwtUtils.extractUsername(token.substring(7));
-        System.out.println(username);
-        User user = userRepository.findByUsername(username).orElseThrow(Exception::new);
+    public Task createTask(Task task, String username) throws Exception {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            user = new User();
+            user.setUsername(username);
+            user.setLink("t.me/" + username);
+            userRepository.save(user);
+        }
+
         task.setUser(user);
         return taskRepository.save(task);
     }
 
     public List<Task> getAllTasks() {
         log.info("Получен список всех задач.");
-        return (List<Task>) taskRepository.findAll();
+        return taskRepository.findAll();
     }
 
     public Optional<Task> getTaskById(Long id) {
@@ -60,9 +63,16 @@ public class TaskService {
         taskRepository.deleteById(id);
    }
 
-   public List<Task> filterByStatus(boolean status) {
+   public List<Task> filterByStatus(String username,boolean status) {
         log.info("Задачи отсортированы по статусу.\nТекущий статус - {}", status);
-        return taskRepository.findByisCompleted(status);
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            user = new User();
+            user.setUsername(username);
+            user.setLink("t.me/" + username);
+            userRepository.save(user);
+        }
+        return taskRepository.findByisCompletedAndUser(status, userRepository.findByUsername(username));
    }
 
    public List<Task> filterByDate() {
