@@ -16,7 +16,7 @@ import java.util.List;
 @Tag(name = "Контроллер задач", description = "Позволяет управлять списком задач")
 @Slf4j
 @RestController
-@RequestMapping("api/tasks")
+@RequestMapping("/tasks")
 public class TaskController {
 
     @Autowired
