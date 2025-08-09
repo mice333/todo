@@ -29,7 +29,7 @@ public class TaskController {
     @GetMapping
     public ResponseEntity<?> showTasks(@RequestParam @Parameter String username) {
         log.info("Отправлен GET по пути \"/tasks\"");
-        List<Task> tasks = taskService.getAllTasks();
+        List<Task> tasks = taskService.getAllTasks(username);
         if (tasks.isEmpty()) {
             return ResponseEntity.status(404).body("tasks are empty");
         }
@@ -50,28 +50,26 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
-    // TODO: ЭТО НЕ ФИЛЬТРАЦИЯ, ЭТО СОРТИРОВКА
     @Operation(
             summary = "Получение всех задач",
             description = "Позволяет получить список всех задач"
     )
-    @GetMapping("/filter/date")
-    public ResponseEntity<?> showFilteredTasksByDate(@RequestParam @Parameter String username) {
+    @GetMapping("/sort/date")
+    public ResponseEntity<?> showSortTasksByDate(@RequestParam @Parameter String username) {
         log.info("Отправлен GET по пути \"/tasks/filter/date\"");
 
-        return ResponseEntity.ok(taskService.filterByDate());
+        return ResponseEntity.ok(taskService.filterByDate(username));
     }
 
-    // TODO: ЭТО НЕ ФИЛЬТРАЦИЯ, ЭТО СОРТИРОВКА
     @Operation(
             summary = "Получение всех задач",
             description = "Позволяет получить список всех задач"
     )
-    @GetMapping("/filter/priority")
-    public ResponseEntity<?> showFilteredTasksByPriority(@RequestParam @Parameter String username) {
+    @GetMapping("/sort/priority")
+    public ResponseEntity<?> showSortTasksByPriority(@RequestParam @Parameter String username) {
         log.info("Отправлен GET по пути \"/tasks/filter/priority\"");
 
-        return ResponseEntity.ok(taskService.filterByPriority());
+        return ResponseEntity.ok(taskService.filterByPriority(username));
     }
 
     @Operation(
@@ -95,8 +93,11 @@ public class TaskController {
         log.info("Отправлен PUT по пути \"/tasks/task/{}\"", id);
 
         try {
-            Task updTask = taskService.updateTask(id, task);
-            return ResponseEntity.ok(updTask);
+            Task updTask = taskService.updateTask(username, id, task);
+            if (updTask != null) {
+                return ResponseEntity.ok(updTask);
+            }
+            return ResponseEntity.status(403).build();
         } catch (RuntimeException e) {
             log.error("");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -111,7 +112,7 @@ public class TaskController {
     public ResponseEntity<Void> deleteTask(@RequestParam @Parameter String username, @PathVariable Long id) {
         log.info("Отправлен DELETE по пути \"/tasks/task/{}\"", id);
 
-        taskService.deleteTask(id);
+        taskService.deleteTask(username, id);
         return ResponseEntity.noContent().build();
     }
 }

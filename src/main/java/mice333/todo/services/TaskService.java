@@ -32,9 +32,16 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public List<Task> getAllTasks() {
+    public List<Task> getAllTasks(String username) {
         log.info("Получен список всех задач.");
-        return taskRepository.findAll();
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            user = new User();
+            user.setUsername(username);
+            user.setLink("t.me/" + username);
+            userRepository.save(user);
+        }
+        return taskRepository.findAllByUser(user);
     }
 
     public Optional<Task> getTaskById(Long id) {
@@ -42,25 +49,30 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-   public Task updateTask(Long id, Task updatedTask) {
+   public Task updateTask(String username, Long id, Task updatedTask) {
         Task oldTask = taskRepository.findById(id).orElseThrow(() -> new RuntimeException("task with id: " + id + " - not found"));
-
-        if (updatedTask.getTitle() != null) {
-            oldTask.setTitle(updatedTask.getTitle());
+        if (oldTask.getUser().getUsername().equals(username)) {
+            if (updatedTask.getTitle() != null) {
+                oldTask.setTitle(updatedTask.getTitle());
+            }
+            if (updatedTask.getDescription() != null) {
+                oldTask.setDescription(updatedTask.getDescription());
+            }
+            if (oldTask.isCompleted() != updatedTask.isCompleted()) {
+                oldTask.setCompleted(updatedTask.isCompleted());
+            }
+            log.info("Обновлена задача с {} id", id);
+            return taskRepository.save(oldTask);
         }
-       if (updatedTask.getDescription() != null) {
-           oldTask.setDescription(updatedTask.getDescription());
-       }
-       if (oldTask.isCompleted() != updatedTask.isCompleted()) {
-           oldTask.setCompleted(updatedTask.isCompleted());
-       }
-       log.info("Обновлена задача с {} id", id);
-       return taskRepository.save(oldTask);
+        return null;
    }
 
-   public void deleteTask(Long id) {
+   public void deleteTask(String username, Long id) {
         log.info("Удалена задача с {}", id);
-        taskRepository.deleteById(id);
+        Task task = taskRepository.findById(id).orElseThrow();
+        if (task.getUser().getUsername().equals(username)) {
+            taskRepository.deleteById(id);
+        }
    }
 
    public List<Task> filterByStatus(String username,boolean status) {
@@ -75,13 +87,27 @@ public class TaskService {
         return taskRepository.findByisCompletedAndUser(status, userRepository.findByUsername(username));
    }
 
-   public List<Task> filterByDate() {
+   public List<Task> filterByDate(String username) {
         log.info("Задачи отсортированы по дате создания");
-        return taskRepository.findAllByOrderByCreatedAtAsc();
+       User user = userRepository.findByUsername(username);
+       if (user == null) {
+           user = new User();
+           user.setUsername(username);
+           user.setLink("t.me/" + username);
+           userRepository.save(user);
+       }
+        return taskRepository.findAllByUserOrderByCreatedAtAsc(user);
    }
 
-   public List<Task> filterByPriority() {
+   public List<Task> filterByPriority(String username) {
         log.info("Задачи отсортированы по приоритету");
-        return taskRepository.findAllByOrderByPriorityDesc();
+       User user = userRepository.findByUsername(username);
+       if (user == null) {
+           user = new User();
+           user.setUsername(username);
+           user.setLink("t.me/" + username);
+           userRepository.save(user);
+       }
+        return taskRepository.findAllByUserOrderByPriorityDesc(user);
    }
 }

@@ -9,8 +9,9 @@ import java.util.List;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
+    List<Task> findAllByUser(User user);
     List<Task> findByisCompleted(boolean isCompleted);
     List<Task> findByisCompletedAndUser(boolean isCompleted, User user);
-    List<Task> findAllByOrderByCreatedAtAsc();
-    List<Task> findAllByOrderByPriorityDesc();
+    List<Task> findAllByUserOrderByCreatedAtAsc(User user);
+    List<Task> findAllByUserOrderByPriorityDesc(User user);
 }
