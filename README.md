@@ -1,6 +1,8 @@
 # todo
 
-## Tech stack
+REST API для списка задач
+
+# Tech stack
 
 <p>
   <img alt="Java" src="https://img.shields.io/badge/java-orange?style=for-the-badge&logo=openjdk&logoColor=white">
@@ -14,13 +16,9 @@
 Backend списка задач.
 
 ## TODO
-- [x] Добавить в таск автора(пользователя), который её создал
-- [x] Улучшить регистрацию
-- [ ] Проработать защиту эндпоинтов в SecurityConfig
-- [x] Добавить логгирование
+
 - [ ] Покрыть тестами
-- [ ] Добавить миграцию
-- [ ] Документирование REST API с помощью Swagger
-  <br/>
-  <br/>
-- [ ] Добавить чтение токена из куки
+- [x] Добавить миграцию
+- [x] Документирование REST API с помощью Swagger
+- [ ] Обработать ответы
+- [ ] Обработать ошибки

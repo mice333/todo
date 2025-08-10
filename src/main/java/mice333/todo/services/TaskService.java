@@ -9,7 +9,6 @@ import mice333.todo.repositories.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -19,7 +18,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
-    public Task createTask(Task task, String username) throws Exception {
+    public Long createTask(Task task, String username) throws Exception {
         User user = userRepository.findByUsername(username);
         if (user == null) {
             user = new User();
@@ -29,7 +28,8 @@ public class TaskService {
         }
 
         task.setUser(user);
-        return taskRepository.save(task);
+        task = taskRepository.save(task);
+        return task.getId();
     }
 
     public List<Task> getAllTasks(String username) {
@@ -44,9 +44,9 @@ public class TaskService {
         return taskRepository.findAllByUser(user);
     }
 
-    public Optional<Task> getTaskById(Long id) {
+    public Task getTaskById(Long id) {
         log.info("Получена задача с {} id", id);
-        return taskRepository.findById(id);
+        return taskRepository.findById(id).orElse(null);
     }
 
    public Task updateTask(String username, Long id, Task updatedTask) {

@@ -37,6 +37,19 @@ public class TaskController {
     }
 
     @Operation(
+            summary = "Получение задачи по уникальному идентификатору"
+    )
+    @GetMapping("/task/{id}")
+    public ResponseEntity<?> showTaskById(@PathVariable Long id) {
+        log.info("Отправлен GET по пути \"/tasks/task/{}\"", id);
+        Task task = taskService.getTaskById(id);
+        if (task == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(task);
+    }
+
+    @Operation(
             summary = "Получение всех задач с заданным статусом",
             description = "В зависимости от статуса задачи фильтрует задачи"
     )
@@ -80,8 +93,8 @@ public class TaskController {
     public ResponseEntity<?> createTask(@RequestBody Task task, @RequestParam @Parameter String username) throws Exception {
         log.info("Отправлен POST по пути \"/tasks/create\"");
 
-        Task crtdTask = taskService.createTask(task, username);
-        return ResponseEntity.status(HttpStatus.CREATED).body(crtdTask);
+        Long taskId = taskService.createTask(task, username);
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskId);
     }
 
     @Operation(
