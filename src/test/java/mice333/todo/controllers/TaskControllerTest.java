@@ -23,4 +23,9 @@ class TaskControllerTest {
         mvc.perform(get("/tasks?username=nokisssev")).andExpect(status().isOk());
     }
 
+    @Test
+    public void add() {
+        assertEquals(3, 1);
+    }
+
 }
