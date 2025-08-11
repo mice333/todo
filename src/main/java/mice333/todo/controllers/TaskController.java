@@ -44,7 +44,7 @@ public class TaskController {
         log.info("Отправлен GET по пути \"/tasks/task/{}\"", id);
         Task task = taskService.getTaskById(id);
         if (task == null) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(task);
     }
@@ -57,7 +57,7 @@ public class TaskController {
     public ResponseEntity<?> showFilteredTasksByStatus(@RequestParam @Parameter String username, @RequestParam(name = "completed") @Parameter(description = "Выполнена ли задача?", example = "true") boolean status) {
         log.info("Отправлен GET по пути \"/tasks/filter/status&completed={}\"", status);
         List<Task> tasks = taskService.filterByStatus(username,status);
-        if (tasks.isEmpty()) {
+        if (tasks.isEmpty()) { // TODO: точно ли такая проверка?
             return ResponseEntity.status(404).body("tasks are empty");
         }
         return ResponseEntity.ok(tasks);
@@ -86,20 +86,23 @@ public class TaskController {
     }
 
     @Operation(
-            summary = "Получение всех задач",
-            description = "Позволяет получить список всех задач"
+            summary = "Создание задачи",
+            description = "Позволяет создать задачу"
     )
     @PostMapping("/create")
     public ResponseEntity<?> createTask(@RequestBody Task task, @RequestParam @Parameter String username) throws Exception {
         log.info("Отправлен POST по пути \"/tasks/create\"");
 
         Long taskId = taskService.createTask(task, username);
+        if (taskId == null) {
+            return ResponseEntity.status(403).body("У вас уже 5 задач - выполните их");
+        }
         return ResponseEntity.status(HttpStatus.CREATED).body(taskId);
     }
 
     @Operation(
-            summary = "Получение всех задач",
-            description = "Позволяет получить список всех задач"
+            summary = "Обновление задачи",
+            description = "Позволяет обновить задачу"
     )
     @PutMapping("/task/{id}")
     public ResponseEntity<?> updateTask(@RequestParam @Parameter String username, @PathVariable Long id, @RequestBody Task task) {
@@ -118,14 +121,22 @@ public class TaskController {
     }
 
     @Operation(
-            summary = "Получение всех задач",
-            description = "Позволяет получить список всех задач"
+            summary = "Удаление определённой задачи",
+            description = "Позволяет удалить задачу по уникальному идентификатору"
     )
     @DeleteMapping("/task/{id}")
     public ResponseEntity<Void> deleteTask(@RequestParam @Parameter String username, @PathVariable Long id) {
         log.info("Отправлен DELETE по пути \"/tasks/task/{}\"", id);
 
         taskService.deleteTask(username, id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteAllTasks(@RequestParam @Parameter String username) {
+        log.info("Отправлен DELETE по пути \"/tasks/delete/\"");
+
+        taskService.deleteAllTasks(username);
         return ResponseEntity.noContent().build();
     }
 }

@@ -24,7 +24,7 @@ public class Task {
     @Column(nullable = true)
     private String description;
 
-    private int priority = 1;
+    private String priority = "Важно";
     private LocalDate createdAt = LocalDate.now();
 
     private boolean isCompleted = false;

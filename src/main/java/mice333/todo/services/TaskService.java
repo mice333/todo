@@ -1,5 +1,6 @@
 package mice333.todo.services;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mice333.todo.models.Task;
@@ -13,6 +14,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TaskService {
 
     private final TaskRepository taskRepository;
@@ -26,7 +28,9 @@ public class TaskService {
             user.setLink("t.me/" + username);
             userRepository.save(user);
         }
-
+        if (taskRepository.countByUser(user) == 5) {
+            return null;
+        }
         task.setUser(user);
         task = taskRepository.save(task);
         return task.getId();
@@ -73,6 +77,17 @@ public class TaskService {
         if (task.getUser().getUsername().equals(username)) {
             taskRepository.deleteById(id);
         }
+   }
+
+   public void deleteAllTasks(String username) {
+       User user = userRepository.findByUsername(username);
+       if (user == null) {
+           user = new User();
+           user.setUsername(username);
+           user.setLink("t.me/" + username);
+           userRepository.save(user);
+       }
+        taskRepository.deleteAllByUser(user);
    }
 
    public List<Task> filterByStatus(String username,boolean status) {

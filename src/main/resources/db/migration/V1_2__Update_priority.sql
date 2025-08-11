@@ -1,0 +1,1 @@
+ALTER TABLE tasks ALTER COLUMN priority TYPE varchar(50);
