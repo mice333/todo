@@ -121,6 +121,26 @@ public class TaskController {
     }
 
     @Operation(
+            summary = "Обновление статуса задачи",
+            description = "Позволяет изменить статус задачи"
+    )
+    @PatchMapping("/task/{id}")
+    public ResponseEntity<?> updateTaskStatus(@RequestParam @Parameter String username, @PathVariable Long id) {
+        log.info("Отправлен PATCH по пути \"/tasks/task/{}\"", id);
+
+        try {
+            Task updTask = taskService.completeTask(username, id);
+            if (updTask != null) {
+                return ResponseEntity.ok(updTask);
+            }
+            return ResponseEntity.status(403).build();
+        } catch (RuntimeException e) {
+            log.error("");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @Operation(
             summary = "Удаление определённой задачи",
             description = "Позволяет удалить задачу по уникальному идентификатору"
     )

@@ -71,6 +71,19 @@ public class TaskService {
         return null;
    }
 
+   public Task completeTask(String username, Long id) {
+        Task oldTask = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("task with id: " + id + " - not found"));
+
+       if (oldTask.getUser().getUsername().equals(username)) {
+           oldTask.setCompleted(!oldTask.isCompleted());
+           return taskRepository.save(oldTask);
+       }
+
+
+        return null;
+   }
+
    public void deleteTask(String username, Long id) {
         log.info("Удалена задача с {}", id);
         Task task = taskRepository.findById(id).orElseThrow();
